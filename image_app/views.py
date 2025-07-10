@@ -1,10 +1,10 @@
-import os
+import io
+import base64
 import gc
 from django.shortcuts import render
-from django.conf import settings
 from PIL import Image
 import numpy as np
-from .realesrgan_model import upsampler  # ⬅️ Imported globally loaded model
+from .realesrgan_model import upsampler  # Preloaded model
 
 def upscale_view(request):
     if request.method == 'POST':
@@ -14,28 +14,26 @@ def upscale_view(request):
         img = Image.open(image).convert('RGB')
         img_np = np.array(img)
 
-        # === Enhancement using globally loaded upsampler ===
+        # Enhance image using Real-ESRGAN
         output_np, _ = upsampler.enhance(img_np)
         output_img = Image.fromarray(output_np)
 
-        # Save output image
-        result_dir = os.path.join(settings.MEDIA_ROOT, 'results')
-        os.makedirs(result_dir, exist_ok=True)
-        output_path = os.path.join(result_dir, 'result.png')
-        output_img.save(output_path)
+        # Convert input and output images to base64 (for direct embedding)
+        def image_to_base64(pil_image):
+            buffer = io.BytesIO()
+            pil_image.save(buffer, format='PNG')
+            return base64.b64encode(buffer.getvalue()).decode('utf-8')
 
-        # Save uploaded input too (optional)
-        upload_path = os.path.join(settings.MEDIA_ROOT, 'uploads', image.name)
-        os.makedirs(os.path.dirname(upload_path), exist_ok=True)
-        img.save(upload_path)
+        input_b64 = image_to_base64(img)
+        output_b64 = image_to_base64(output_img)
 
         # Clean up memory
         del img, img_np, output_np, output_img
         gc.collect()
 
         return render(request, 'result.html', {
-            'input_url': f"/media/uploads/{image.name}",
-            'output_url': '/media/results/result.png'
+            'input_b64': input_b64,
+            'output_b64': output_b64
         })
 
     return render(request, 'index.html')

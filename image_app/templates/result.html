@@ -4,8 +4,6 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="google-site-verification" content="VSf5g09h4vZHBgNMgJIMJjZtGC-OpEVReh_YC-gfvKM" />
-  <meta name="google-site-verification" content="Y5kS1bM2WnpH6E6PSfYsPvjCs9o0H3if3XnHVIuNXSA" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Enhanced Result</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -18,16 +16,18 @@
     <div class="image-grid">
       <div style="flex: 1; text-align:center;">
         <h3>Original</h3>
-        <img src="{{ input_url }}" alt="Original Image" style="max-width:100%; height:auto; max-height:400px;">
+        <img src="data:image/png;base64,{{ input_b64 }}" alt="Original Image"
+          style="max-width:100%; height:auto; max-height:400px;">
       </div>
       <div style="flex: 1; text-align:center;">
         <h3>Upscaled</h3>
-        <img src="{{ output_url }}" alt="Upscaled Image" style="max-width:100%; height:auto; max-height:400px;">
+        <img src="data:image/png;base64,{{ output_b64 }}" alt="Upscaled Image"
+          style="max-width:100%; height:auto; max-height:400px;">
       </div>
     </div>
 
-    <div class="actions">
-      <a href="{{ output_url }}" class="submit-btn" download>⬇️ Download Output</a> |
+    <div class="actions" style="text-align:center; margin-top:20px;">
+      <a href="data:image/png;base64,{{ output_b64 }}" download="upscaled.png" class="submit-btn">⬇️ Download Output</a> |
       <a href="/" class="submit-btn">🔁 Upscale Another</a>
     </div>
   </div>
