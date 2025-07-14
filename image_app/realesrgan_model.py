@@ -7,7 +7,7 @@ from realesrgan import RealESRGANer
 # Default values
 DEFAULT_MODEL_NAME = 'RealESRGAN_x4plus'
 DEFAULT_SCALE = 4
-DEFAULT_TILE = 0
+DEFAULT_TILE = 256          # ✅ Enable tiling to avoid memory crashes
 DEFAULT_TILE_PAD = 10
 USE_HALF = torch.cuda.is_available()
 
